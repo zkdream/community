@@ -2,12 +2,19 @@ package com.zk.community.controller;
 
 import com.zk.community.dto.AccessTokenDTO;
 import com.zk.community.dto.GithupUser;
+import com.zk.community.mapper.UserMapper;
+import com.zk.community.model.User;
 import com.zk.community.provider.GithupProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.UUID;
 
 @Controller
 public class AuthorizeController {
@@ -24,9 +31,17 @@ public class AuthorizeController {
     @Value("${githup.client.url}")
     private String clientUrl;
 
+    @Autowired
+    private UserMapper userMapper;
+
+
+
     @GetMapping("/callback")
     public String callback(@RequestParam(name = "code") String code,
-                           @RequestParam(name = "state") String state){
+                           @RequestParam(name = "state") String state,
+                           HttpServletRequest request,
+                           HttpServletResponse response){
+
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
         accessTokenDTO.setClient_id(clientId);
         accessTokenDTO.setClient_secret(clientSecret);
@@ -34,9 +49,24 @@ public class AuthorizeController {
         accessTokenDTO.setRedirect_uri(clientUrl);
         accessTokenDTO.setState(state);
         String accessToken = githupProvider.getAccessToken(accessTokenDTO);
-        GithupUser user = githupProvider.getUser(accessToken);
-        System.out.println(user.getName());
-        return "index";
+        GithupUser githupUser = githupProvider.getUser(accessToken);
+        if (githupUser!=null){
+            User  user = new User();
+            String token = UUID.randomUUID().toString();
+            user.setToken(token);
+            user.setName(githupUser.getName());
+            user.setAccountId(String.valueOf(githupUser.getId()));
+            user.setGmtCreate(System.currentTimeMillis());
+            user.setGmtModified(user.getGmtCreate());
+            userMapper.insert(user);
+            response.addCookie(new Cookie("token",token));
+//            request.getSession().setAttribute("user",user);
+            return "redirect:/";
+        }else {
+            return "redirect:/";
+        }
+//        System.out.println(user.getName());
+//        return "index";
     }
 
 }

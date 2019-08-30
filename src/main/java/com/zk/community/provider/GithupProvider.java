@@ -29,7 +29,7 @@ public class GithupProvider {
             String[] split = result.split("&");
             String[] split1 = split[0].split("=");
             String token=split1[1];
-//            System.out.println(result);
+            System.out.println(result);
             return token;
         } catch (IOException e) {
             e.printStackTrace();
