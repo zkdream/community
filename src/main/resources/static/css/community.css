@@ -1,0 +1,51 @@
+html{
+    height: 100%;
+}
+
+body{
+    background-color: #efefef;
+    height: 100%;
+}
+.h-pulish{
+    /*size: 16px;*/
+    margin-left: 6px;
+}
+.h2, h2 {
+    font-size: 24px;
+}
+
+/*.h-pulish span{*/
+    /*size: 16px;*/
+/*}*/
+.main{
+    margin:30px;
+    height: 85%;
+    background-color: white;
+}
+.btn-publish{
+    float: right;
+    margin-bottom: 15px;
+}
+.container-left{
+    height: 85%;
+}
+ .div-alert .alert{
+    padding:6px;
+}
+
+ .media-object{
+     width: 38px;
+     height: 38px;
+ }
+
+ .text-desc{
+     font-size: 12px;
+     font-weight: normal;
+     color: #999;
+ }
+
+/*.container-fluid{*/
+    /*height:100%;*/
+/*}*/
+
+
