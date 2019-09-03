@@ -47,5 +47,8 @@ body{
 /*.container-fluid{*/
     /*height:100%;*/
 /*}*/
+.profile .section{
+    margin: 15px;
+}
 
 
