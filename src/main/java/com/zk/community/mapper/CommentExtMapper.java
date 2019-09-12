@@ -1,15 +1,14 @@
 package com.zk.community.mapper;
 
+import com.zk.community.model.Comment;
+import com.zk.community.model.CommentExample;
 import com.zk.community.model.Question;
-import com.zk.community.model.QuestionExample;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
 
-public interface QuestionExtMapper {
+public interface CommentExtMapper {
 
-    int incView(Question record);
-
-    int incComment(Question record);
+    int incComment(Comment record);
 }
