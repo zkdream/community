@@ -1,7 +1,9 @@
 package com.zk.community.controller;
 
 import com.zk.community.dto.PaginationDTO;
+import com.zk.community.model.Notification;
 import com.zk.community.model.User;
+import com.zk.community.service.NotificationService;
 import com.zk.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,14 +21,15 @@ public class ProfileController {
     @Autowired
     private QuestionService questionService;
 
-
+    @Autowired
+    private NotificationService notificationService;
 
     @GetMapping("/profile/{action}")
     public String profile(@PathVariable(name="action") String action,
                           Model model,
                           HttpServletRequest request,
                           @RequestParam(name = "page",defaultValue = "1") Integer page,
-                          @RequestParam(name = "size",defaultValue = "1") Integer size
+                          @RequestParam(name = "size",defaultValue = "10") Integer size
                           ){
 
 
@@ -37,12 +40,18 @@ public class ProfileController {
         if ("questions".equals(action)){
             model.addAttribute("section","questions");
             model.addAttribute("sectionName","我的提问");
+            PaginationDTO paginationDTO = questionService.listByUserId(user.getId(), page, size);
+            model.addAttribute("pagination",paginationDTO);
         }else if ("replies".equals(action)){
+            PaginationDTO paginationDTO=notificationService.list(user.getId(), page, size);
+//            Long unreadCount=notificationService.unreadCount(user.getId());
+            model.addAttribute("pagination",paginationDTO);
             model.addAttribute("section","replies");
+//            model.addAttribute("unreadCount",unreadCount);
+
             model.addAttribute("sectionName","最新回复");
         }
-        PaginationDTO paginationDTO = questionService.listByUserId(user.getId(), page, size);
-        model.addAttribute("pagination",paginationDTO);
+
         return "profile";
     }
 

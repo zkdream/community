@@ -23,8 +23,8 @@ function collapseComments(e) {
                 $.each(data.data, function (index, comment) {
                     var mediaLeftElement = $("<div/>", {
                         "class": "media-left"
-                    }).append($("<img/>", {
-                        "class": "media-object img-rounded",
+                    }).append($("<images/>", {
+                        "class": "media-object images-rounded",
                         "src": comment.user.avatarUrl
                     }));
                     var mediaBodyElement = $("<div/>", {
@@ -98,4 +98,19 @@ function comment(e) {
     var content = $("#input-" + commentId).val();
     commentToTarget(commentId, 2, content);
 
+}
+function showSelectTag() {
+    $("#select-tag").show();
+}
+
+function selectTag(e) {
+    var value=e.getAttribute("data-tag")
+    var previous = $("#tag").val();
+    if (previous.indexOf(value) == -1) {
+        if (previous) {
+            $("#tag").val(previous + "," + value);
+        } else {
+            $("#tag").val(value);
+        }
+    }
 }

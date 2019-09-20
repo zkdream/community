@@ -51,7 +51,7 @@ body{
 }
 .community-menu{
     color: #999;
-    display: block;
+    /*display: block;*/
     margin-bottom: 15px;
     font-size: 13px;
 }
@@ -110,6 +110,30 @@ body{
 .question_title{
     margin-top: 25px;
 }
+.question-tag{
+    margin-right: 8px;
+}
+.question-related{
+    line-height: 20px;
+    font-size: 12px;
+    margin-left: 0px;
+    padding-left: 0px;
+    list-style: none;
+}
+.question-meizi{
+    width: 100%;
+}
+.publish-tag-tap{
+    margin-top:10px;
+    display: none;
+    margin-right: 10px;
+}
+
+.publish-tag-tap .label-info{
+    white-space: normal;
+    margin: 5px 5px;
+    display: inline-block;
+}
 
 .sub_comments{
     border-radius: 5px;
@@ -121,5 +145,12 @@ body{
 
 .sub_comments .btn{
     margin: 10px 0;
+}
+.foot{
+    text-align: center;
+    /* margin: 10px auto; */
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 13px;
 }
 

@@ -6,6 +6,8 @@ import com.zk.community.mapper.UserMapper;
 import com.zk.community.model.User;
 import com.zk.community.provider.GithupProvider;
 import com.zk.community.service.UserService;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -18,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 @Controller
+@Slf4j
 public class AuthorizeController {
 
     @Autowired
@@ -67,7 +70,9 @@ public class AuthorizeController {
 //            request.getSession().setAttribute("user",user);
             return "redirect:/";
         }else {
+            log.error("callback get githup error,{}",githupUser);
             return "redirect:/";
+
         }
 //        System.out.println(user.getName());
 //        return "index";

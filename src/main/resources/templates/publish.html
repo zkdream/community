@@ -6,9 +6,12 @@
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
     <link rel="stylesheet" href="/css/community.css"/>
+
+    <link rel="stylesheet" href="/css/editormd.min.css"/>
     <script src="/js/jquery-3.4.1.min.js" type="application/javascript"></script>
     <script src="/js/bootstrap.min.js" type="application/javascript"></script>
-
+    <script src="/js/community.js" type="application/javascript"></script>
+    <script src="/js/editormd.min.js"></script>
 </head>
 <body>
 <div th:insert="~{navigation::nav}"></div>
@@ -18,21 +21,103 @@
             <h2 class="h-pulish"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发布</h2>
             <hr/>
             <form action="/publish" method="post">
-                <input type="hidden" th:value="${id}" name="id" />
+                <input type="hidden" th:value="${id}" name="id"/>
+
+                <!--问题标题-->
                 <div class="form-group">
                     <label for="title">问题标题(简单扼要)</label>
                     <input type="text" class="form-control" id="title" name="title" th:value="${title}"
-                           placeholder="问题标题"/>
+                           placeholder="问题标题" autocomplete="off"/>
                 </div>
 
-                <div class="form-group">
-                    <label for="description">问题补充</label>
-                    <textarea type="text" class="form-control" id="description" th:text="${description}"
-                              name="description" rows="10" placeholder="问题补充"></textarea>
+                <!--问题补充-->
+                <div class="form-group" id="editor">
+                    <!-- Tips: Editor.md can auto append a `<textarea>` tag -->
+                    <textarea name="description" id="description" th:text="${description}"
+                              style="display:none;">问题补充</textarea>
                 </div>
+                <script type="text/javascript">
+                    $(function () {
+                        var editor = editormd("editor", {
+                            mode: "markdown",
+                            width: "100%",
+                            height: "400px",
+                            // dynamic set Markdown text
+                            delay: 0,            // Delay parse markdown to html, Uint : ms
+                            watch: true,   // 关闭实时预览
+                            placeholder: "问题补充...",
+                            path: "/editorlib/",  // Autoload modules mode, codemirror, marked... dependents libs path
+//                            theme : "default", //dark
+//                            previewTheme : "default",
+//                            editorTheme : "pastel-on-dark",
+
+                            saveHTMLToTextarea : true,    // 保存 HTML 到 Textarea
+                            searchReplace : true,
+                            htmlDecode : "style,script,iframe|on*",            // 开启 HTML 标签解析，为了安全性，默认不开启
+                            //toolbar  : false,             //关闭工具栏
+                            //previewCodeHighlight : false, // 关闭预览 HTML 的代码块高亮，默认开启
+//                            emoji : true,
+                            taskList : true,
+                            tocm : true,         // Using [TOCM]
+                            tex : true,                   // 开启科学公式TeX语言支持，默认关闭
+                            flowChart : true,             // 开启流程图支持，默认关闭
+                            sequenceDiagram : true,       // 开启时序/序列图支持，默认关闭,
+                            toolbarCustomIcons   : {               // using html tag create toolbar icon, unused default <a> tag.
+                                info        : "<a ></a>",
+                            },
+                            dialogLockScreen : false,   // 设置弹出层对话框不锁屏，全局通用，默认为true
+                            dialogShowMask : false,     // 设置弹出层对话框显示透明遮罩层，全局通用，默认为true
+                            dialogDraggable : false,    // 设置弹出层对话框不可拖动，全局通用，默认为true
+                            dialogMaskOpacity : 0.4,    // 设置透明遮罩层的透明度，全局通用，默认值为0.1
+                            dialogMaskBgColor : "#000", // 设置透明遮罩层的背景颜色，全局通用，默认为#fff
+                            imageUpload : true,
+                            imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                            imageUploadURL : "/file/upload",
+
+                        });
+                    });
+                </script>
+                <!--<div class="form-group">-->
+                <!--<label for="description">问题补充</label>-->
+                <!--<textarea type="text" class="form-control" id="description" th:text="${description}"-->
+                <!--name="description" rows="10" placeholder="问题补充"></textarea>-->
+                <!--</div>-->
+
+                <!--添加标签-->
                 <div class="form-group">
                     <label for="tag">添加标签:</label>
-                    <input type="text" class="form-control" id="tag" name="tag" th:value="${tag}" placeholder="添加标签"/>
+                    <input type="text" class="form-control" id="tag" autocomplete="off" name="tag" th:value="${tag}"
+                           placeholder="添加标签"
+                           onclick="showSelectTag()"
+                    />
+                    <div th:id="select-tag" class="publish-tag-tap" style="display: none">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" th:each="selectTag,selectTagStatus:${tags}"
+                                th:class="${selectTagStatus.first?'active':''}">
+                                <a th:href="${'#'+selectTag.categoryName}" aria-controls="home" role="tab"
+                                   data-toggle="tab" th:text="${selectTag.categoryName}">开发语言</a></li>
+                            <!--<li role="presentation">-->
+                            <!--<a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">平台架构</a></li>-->
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane" th:id="${categoryTag.categoryName}"
+                                 th:each="categoryTag,selectTagStatus:${tags}"
+                                 th:classappend="${selectTagStatus.first?'active':''}">
+                                  <span class="label label-info" th:each="selectChildTag:${categoryTag.tags}">
+                                  <span class="glyphicon glyphicon-tags" th:onclick="selectTag(this)"
+                                        th:data-tag="${selectChildTag}" th:text="${' '+selectChildTag}">Spring</span>
+                                  </span>
+                            </div>
+                            <!--<div role="tabpanel" class="tab-pane" id="profile">-->
+                            <!--<span class="label label-info">-->
+                            <!--<span class="glyphicon glyphicon-tags" onclick="selectTag('Java')">Java</span>-->
+                            <!--</span>-->
+                            <!--</div>-->
+                        </div>
+                    </div>
                 </div>
 
                 <div class="container-fluid div-alert">
@@ -53,5 +138,6 @@
         </div>
     </div>
 </div>
+<div th:insert="~{footer::foot}"></div>
 </body>
 </html>
